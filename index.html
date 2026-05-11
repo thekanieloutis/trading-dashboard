@@ -2,86 +2,96 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trading Dashboard - Powered by Gemini</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-[#0b0f1a] text-slate-200 min-h-screen p-4">
-    <div class="max-w-7xl mx-auto">
-        <!-- Header con Alerta de Parpadeo -->
-        <header id="main-header" class="flex justify-between items-center mb-8 p-4 rounded-xl transition-all duration-500">
+<body class="p-6">
+    <div class="max-w-[1400px] mx-auto">
+        <!-- Barra Superior -->
+        <div class="flex justify-between items-center mb-10">
             <div>
-                <h1 class="text-2xl font-bold">Métricas Funded <span class="text-sky-500">AI</span></h1>
-                <p class="text-xs text-slate-400">Análisis de Macros y Psicología en tiempo real</p>
+                <h1 class="text-xl font-bold tracking-tight">OPERATIVA <span class="text-sky-500 italic">FUNDED</span></h1>
+                <p class="text-xs text-slate-500">Monitoreo de Disciplina y Macros</p>
             </div>
-            <button onclick="syncData()" class="bg-sky-600 hover:bg-sky-500 px-5 py-2 rounded-lg font-bold transition shadow-lg">
-                🔄 Sincronizar Datos
-            </button>
-        </header>
-
-        <!-- KPI Cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                <p class="text-[10px] uppercase text-slate-400 tracking-widest">Win Rate</p>
-                <p id="stat-wr" class="text-2xl font-bold text-sky-400">0%</p>
-            </div>
-            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                <p class="text-[10px] uppercase text-slate-400 tracking-widest">Avg Psicología</p>
-                <p id="stat-psych" class="text-2xl font-bold text-emerald-400">0/10</p>
-            </div>
-            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                <p class="text-[10px] uppercase text-slate-400 tracking-widest">Eficiencia MFE</p>
-                <p id="stat-mfe" class="text-2xl font-bold text-white">0%</p>
-            </div>
-            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                <p class="text-[10px] uppercase text-slate-400 tracking-widest">Net P&L</p>
-                <p id="stat-pl" class="text-2xl font-bold text-white">$0.00</p>
+            <div class="flex gap-3">
+                <button onclick="syncData()" class="bg-white/5 hover:bg-white/10 text-white text-xs font-semibold py-2 px-5 rounded-lg border border-white/10 transition">
+                    SINCRONIZAR SHEETS
+                </button>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Gráfico Principal -->
-            <div class="lg:col-span-2 bg-slate-800/50 p-6 rounded-xl border border-slate-700">
-                <h3 class="text-sm font-semibold mb-4 text-slate-400 uppercase">Curva de Equidad</h3>
-                <canvas id="equityChart" height="150"></canvas>
+        <!-- KPIs Principales -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+            <div class="tz-card p-5">
+                <p class="stat-label">Net P&L</p>
+                <p id="stat-pl" class="stat-value text-white">$0.00</p>
+            </div>
+            <div class="tz-card p-5">
+                <p class="stat-label">Win Rate</p>
+                <p id="stat-wr" class="stat-value text-sky-400">0%</p>
+            </div>
+            <div class="tz-card p-5 border-l-2 border-emerald-500">
+                <p class="stat-label">Avg Psicología</p>
+                <p id="stat-psych" class="stat-value text-emerald-400">0.0</p>
+            </div>
+            <div class="tz-card p-5">
+                <p class="stat-label">Eficiencia MFE</p>
+                <p id="stat-mfe" class="stat-value">0%</p>
+            </div>
+            <div class="tz-card p-5">
+                <p class="stat-label">Profit Factor</p>
+                <p id="stat-pf" class="stat-value text-slate-300">0.0</p>
+            </div>
+        </div>
+
+        <!-- Cuerpo Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Gráfica de Equidad -->
+            <div class="lg:col-span-3 tz-card p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-sm font-semibold uppercase tracking-widest text-slate-400">Curva de Equidad</h3>
+                </div>
+                <canvas id="equityChart" height="120"></canvas>
             </div>
 
-            <!-- AI Coach Panel -->
-            <div id="coach-panel" class="bg-slate-900 p-6 rounded-xl border-l-4 border-sky-500">
+            <!-- Panel del AI Coach -->
+            <div id="coach-card" class="tz-card p-6 border-t-2 border-sky-500 flex flex-col">
                 <div class="flex items-center gap-2 mb-4">
-                    <span class="text-xl">🤖</span>
-                    <h3 class="font-bold text-sky-400">Coach de Comportamiento</h3>
+                    <div class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></div>
+                    <h3 class="text-xs font-bold uppercase text-sky-500">AI Behavior Coach</h3>
                 </div>
-                <div id="ai-verdict" class="text-sm leading-relaxed italic text-slate-300">
-                    Sincroniza para analizar tu fatiga y gatillos (SMT/Liquidez)...
+                <div id="ai-verdict" class="text-sm text-slate-300 leading-relaxed overflow-y-auto max-h-[300px] mb-4 italic">
+                    "Analizando tus notas de vaciado mental..."
                 </div>
-                <div id="warning-msg" class="hidden mt-4 p-3 bg-red-500/20 text-red-400 text-xs font-bold rounded animate-pulse">
-                    ⚠️ ALERTA: DISCIPLINA BAJA. MODO PROTECCIÓN ACTIVADO.
+                <div id="coach-alert" class="hidden mt-auto p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                    <p class="text-[10px] font-bold text-red-500 uppercase">⚠️ Riesgo Elevado: Disciplina Baja</p>
                 </div>
             </div>
         </div>
 
-        <!-- Tabla de Trades -->
-        <div class="mt-8 bg-slate-800/30 rounded-xl border border-slate-700 overflow-hidden">
-            <table class="w-full text-left text-xs">
-                <thead class="bg-slate-800 text-slate-400 uppercase">
+        <!-- Tabla de Operaciones Detallada -->
+        <div class="mt-8 tz-card overflow-hidden">
+            <div class="p-4 border-b border-white/5 bg-white/2">
+                <h3 class="text-xs font-bold uppercase text-slate-500">Log de Operaciones Real (Incluye SMT & Macros)</h3>
+            </div>
+            <table class="w-full text-left text-sm">
+                <thead class="bg-black/20 text-slate-500 text-[10px] uppercase">
                     <tr>
-                        <th class="p-4">Fecha/Macro</th>
-                        <th class="p-4">Gatillo</th>
+                        <th class="p-4">Fecha / Macro</th>
+                        <th class="p-4">Instrumento</th>
                         <th class="p-4 text-center">Psicología</th>
-                        <th class="p-4">MFE (Pts)</th>
-                        <th class="p-4 text-right">Resultado</th>
+                        <th class="p-4">Gatillo (SMT/Liq)</th>
+                        <th class="p-4 text-right">MFE Eficiencia</th>
+                        <th class="p-4 text-right">P&L</th>
                     </tr>
                 </thead>
-                <tbody id="trade-table-body"></tbody>
+                <tbody id="trade-table-body" class="divide-y divide-white/5"></tbody>
             </table>
         </div>
     </div>
-    <!-- El orden es CRUCIAL: primero la configuración, luego tu lógica -->
     <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
-</html>
 </html>
