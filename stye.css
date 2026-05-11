@@ -1,44 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-
 :root {
     --bg-dark: #070912;
-    --card-bg: rgba(16, 20, 35, 0.8);
+    --card-bg: rgba(16, 20, 35, 0.9);
     --accent: #38bdf8;
     --border: rgba(255, 255, 255, 0.08);
-    --success: #10b981;
-    --danger: #ef4444;
 }
 
 body {
-    background-color: var(--bg-dark);
+    background-color: var(--bg-dark) !important;
     color: #f1f5f9;
-    font-family: 'Inter', sans-serif;
-    background-image: radial-gradient(circle at top right, rgba(56, 189, 248, 0.05), transparent);
+    background-image: radial-gradient(circle at top right, rgba(56, 189, 248, 0.03), transparent);
 }
 
 .tz-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 12px;
-    backdrop-filter: blur(12px);
-    transition: transform 0.2s ease;
+    backdrop-filter: blur(16px);
 }
 
-.tz-card:hover { border-color: rgba(56, 189, 248, 0.3); }
+.stat-label { 
+    font-size: 10px; 
+    text-transform: uppercase; 
+    letter-spacing: 0.05em; 
+    color: #94a3b8; 
+}
 
-.stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin-bottom: 4px; }
-.stat-value { font-size: 1.5rem; font-weight: 700; }
+.stat-value { 
+    font-size: 1.5rem; 
+    font-weight: 700; 
+}
 
-/* Animación de Alerta de Disciplina */
 .alert-glow {
     animation: glow-red 2s infinite ease-in-out;
 }
 
 @keyframes glow-red {
-    0%, 100% { box-shadow: 0 0 5px rgba(239, 68, 68, 0); }
-    50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); border-color: var(--danger); }
+    0%, 100% { box-shadow: 0 0 5px rgba(244, 63, 94, 0); border-color: var(--border); }
+    50% { box-shadow: 0 0 15px rgba(244, 63, 94, 0.2); border-color: #f43f5e; }
 }
-
-/* Scrollbar estilo moderno */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
