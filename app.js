@@ -50,27 +50,38 @@ function renderDashboard(data) {
 }
 
 function runAICoach(data) {
-    const executed = data.filter(t => t.Accion === "Ejecutada");
-    const lastThree = executed.slice(-3);
-    const lowPsychCount = lastThree.filter(t => parseInt(t["Psicología (1-10)"]) < 5).length;
-    
-    const verdict = document.getElementById('ai-verdict');
-    const warning = document.getElementById('warning-msg');
-    const header = document.getElementById('main-header');
+    const GEMINI_API_KEY = "Tgen-lang-client-0858900635";
 
-    // Lógica de Alerta de Parpadeo
-    if (lowPsychCount >= 3) {
-        header.classList.add('animate-alert');
-        warning.classList.remove('hidden');
-        verdict.innerHTML = "<strong>CRÍTICO:</strong> Has tomado 3 trades con baja disciplina. Tus notas muestran 'corazón acelerado' y fatiga. Orden: Cierra la plataforma.";
-    } else {
-        header.classList.remove('animate-alert');
-        warning.classList.add('hidden');
-        const last = data[data.length-1];
-        verdict.innerHTML = `Analizando tu última sesión: Veo que respetaste el gatillo ${last.Gatillo}. Tu psicología de ${last["Psicología (1-10)"]} es clave para tu cuenta fondeada.`;
+async function runAICoach(data) {
+    const verdictDiv = document.getElementById('ai-verdict');
+    const lastTrade = data[data.length - 1];
+    
+    // Preparamos el contexto para la IA basado en tu perfil
+    const systemPrompt = `Eres un coach de trading experto en psicología (Mark Douglas). 
+    Analiza este trade: ${JSON.stringify(lastTrade)}. 
+    Ten en cuenta: El usuario trabaja 12h al día, valora la disciplina 1-10 más que el dinero 
+    y busca gatillos de SMT y Liquidez. 
+    Si la psicología es < 5, sé firme. Si es > 8, felicítalo aunque pierda dinero.`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: systemPrompt }] }]
+            })
+        });
+        
+        const result = await response.json();
+        const aiText = result.candidates[0].content.parts[0].text;
+        
+        verdictDiv.innerHTML = `<div class="bg-sky-900/20 p-3 rounded-lg border border-sky-500/30 text-sky-200">
+            ${aiText}
+        </div>`;
+    } catch (e) {
+        verdictDiv.innerHTML = "El Coach está descansando. Revisa tu API Key.";
     }
 }
-
+    
 function updateChart(points) {
     if (equityChart) equityChart.destroy();
     const ctx = document.getElementById('equityChart').getContext('2d');
