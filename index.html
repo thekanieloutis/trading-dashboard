@@ -2,43 +2,39 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>TradeZella Clone - Analytics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Analytics Pro</title>
+    <!-- Asegúrate que el nombre sea idéntico al archivo en GitHub -->
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="p-6">
+<body class="bg-[#070912] text-slate-200 p-4 md:p-8">
     <div class="max-w-[1400px] mx-auto">
-        <!-- Barra Superior -->
-        <div class="flex justify-between items-center mb-10">
+        <!-- Header con Control de Sincronización -->
+        <header class="flex justify-between items-center mb-10">
             <div>
-                <h1 class="text-xl font-bold tracking-tight">OPERATIVA <span class="text-sky-500 italic">FUNDED</span></h1>
-                <p class="text-xs text-slate-500">Monitoreo de Disciplina y Macros</p>
+                <h1 class="text-xl font-bold tracking-tighter uppercase">Métricas <span class="text-sky-500">Funded</span></h1>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest">Gestión de Disciplina y Macros</p>
             </div>
-            <div class="flex gap-3">
-                <button onclick="syncData()" class="bg-white/5 hover:bg-white/10 text-white text-xs font-semibold py-2 px-5 rounded-lg border border-white/10 transition">
-                    SINCRONIZAR SHEETS
-                </button>
-            </div>
-        </div>
+            <button onclick="syncData()" class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold py-2 px-6 rounded-lg transition-all shadow-lg shadow-sky-500/10">
+                SINCRONIZAR DATOS
+            </button>
+        </header>
 
-        <!-- KPIs Principales -->
-        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-            <div class="tz-card p-5">
+        <!-- Seccion de KPIs Principales -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="tz-card p-5 border-l-2 border-sky-500">
                 <p class="stat-label">Net P&L</p>
                 <p id="stat-pl" class="stat-value text-white">$0.00</p>
-            </div>
-            <div class="tz-card p-5">
-                <p class="stat-label">Win Rate</p>
-                <p id="stat-wr" class="stat-value text-sky-400">0%</p>
             </div>
             <div class="tz-card p-5 border-l-2 border-emerald-500">
                 <p class="stat-label">Avg Psicología</p>
                 <p id="stat-psych" class="stat-value text-emerald-400">0.0</p>
             </div>
             <div class="tz-card p-5">
-                <p class="stat-label">Eficiencia MFE</p>
-                <p id="stat-mfe" class="stat-value">0%</p>
+                <p class="stat-label">Win Rate</p>
+                <p id="stat-wr" class="stat-value text-slate-300">0%</p>
             </div>
             <div class="tz-card p-5">
                 <p class="stat-label">Profit Factor</p>
@@ -46,44 +42,36 @@
             </div>
         </div>
 
-        <!-- Cuerpo Principal -->
+        <!-- Dashboard Central -->
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- Gráfica de Equidad -->
             <div class="lg:col-span-3 tz-card p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-sm font-semibold uppercase tracking-widest text-slate-400">Curva de Equidad</h3>
-                </div>
+                <h3 class="text-[10px] font-bold text-slate-500 uppercase mb-6 tracking-widest">Curva de Equidad Acumulada</h3>
                 <canvas id="equityChart" height="120"></canvas>
             </div>
 
-            <!-- Panel del AI Coach -->
-            <div id="coach-card" class="tz-card p-6 border-t-2 border-sky-500 flex flex-col">
+            <!-- Panel AI Mentor -->
+            <div id="coach-card" class="tz-card p-6 border-t-2 border-sky-500">
                 <div class="flex items-center gap-2 mb-4">
                     <div class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></div>
-                    <h3 class="text-xs font-bold uppercase text-sky-500">AI Behavior Coach</h3>
+                    <h3 class="text-xs font-bold uppercase text-sky-400">AI Behavior Coach</h3>
                 </div>
-                <div id="ai-verdict" class="text-sm text-slate-300 leading-relaxed overflow-y-auto max-h-[300px] mb-4 italic">
-                    "Analizando tus notas de vaciado mental..."
+                <div id="ai-verdict" class="text-sm text-slate-400 leading-relaxed italic">
+                    Analizando patrones de ejecución y fatiga...
                 </div>
-                <div id="coach-alert" class="hidden mt-auto p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-                    <p class="text-[10px] font-bold text-red-500 uppercase">⚠️ Riesgo Elevado: Disciplina Baja</p>
+                <div id="coach-alert" class="hidden mt-4 p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg">
+                    <p class="text-[10px] font-bold text-rose-500 uppercase">⚠️ MODO PROTECCIÓN ACTIVADO</p>
                 </div>
             </div>
         </div>
 
-        <!-- Tabla de Operaciones Detallada -->
+        <!-- Tabla de Auditoría -->
         <div class="mt-8 tz-card overflow-hidden">
-            <div class="p-4 border-b border-white/5 bg-white/2">
-                <h3 class="text-xs font-bold uppercase text-slate-500">Log de Operaciones Real (Incluye SMT & Macros)</h3>
-            </div>
-            <table class="w-full text-left text-sm">
-                <thead class="bg-black/20 text-slate-500 text-[10px] uppercase">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-white/2 text-slate-500 uppercase font-semibold">
                     <tr>
                         <th class="p-4">Fecha / Macro</th>
-                        <th class="p-4">Instrumento</th>
                         <th class="p-4 text-center">Psicología</th>
-                        <th class="p-4">Gatillo (SMT/Liq)</th>
-                        <th class="p-4 text-right">MFE Eficiencia</th>
+                        <th class="p-4">Gatillo Técnico</th>
                         <th class="p-4 text-right">P&L</th>
                     </tr>
                 </thead>
@@ -91,6 +79,8 @@
             </table>
         </div>
     </div>
+
+    <!-- El orden de estos scripts es fundamental -->
     <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
