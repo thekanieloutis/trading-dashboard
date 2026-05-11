@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Dashboard - Powered by Gemini</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-[#0b0f1a] text-slate-200 min-h-screen p-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header con Alerta de Parpadeo -->
+        <header id="main-header" class="flex justify-between items-center mb-8 p-4 rounded-xl transition-all duration-500">
+            <div>
+                <h1 class="text-2xl font-bold">Métricas Funded <span class="text-sky-500">AI</span></h1>
+                <p class="text-xs text-slate-400">Análisis de Macros y Psicología en tiempo real</p>
+            </div>
+            <button onclick="syncData()" class="bg-sky-600 hover:bg-sky-500 px-5 py-2 rounded-lg font-bold transition shadow-lg">
+                🔄 Sincronizar Datos
+            </button>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <p class="text-[10px] uppercase text-slate-400 tracking-widest">Win Rate</p>
+                <p id="stat-wr" class="text-2xl font-bold text-sky-400">0%</p>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <p class="text-[10px] uppercase text-slate-400 tracking-widest">Avg Psicología</p>
+                <p id="stat-psych" class="text-2xl font-bold text-emerald-400">0/10</p>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <p class="text-[10px] uppercase text-slate-400 tracking-widest">Eficiencia MFE</p>
+                <p id="stat-mfe" class="text-2xl font-bold text-white">0%</p>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <p class="text-[10px] uppercase text-slate-400 tracking-widest">Net P&L</p>
+                <p id="stat-pl" class="text-2xl font-bold text-white">$0.00</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Gráfico Principal -->
+            <div class="lg:col-span-2 bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                <h3 class="text-sm font-semibold mb-4 text-slate-400 uppercase">Curva de Equidad</h3>
+                <canvas id="equityChart" height="150"></canvas>
+            </div>
+
+            <!-- AI Coach Panel -->
+            <div id="coach-panel" class="bg-slate-900 p-6 rounded-xl border-l-4 border-sky-500">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-xl">🤖</span>
+                    <h3 class="font-bold text-sky-400">Coach de Comportamiento</h3>
+                </div>
+                <div id="ai-verdict" class="text-sm leading-relaxed italic text-slate-300">
+                    Sincroniza para analizar tu fatiga y gatillos (SMT/Liquidez)...
+                </div>
+                <div id="warning-msg" class="hidden mt-4 p-3 bg-red-500/20 text-red-400 text-xs font-bold rounded animate-pulse">
+                    ⚠️ ALERTA: DISCIPLINA BAJA. MODO PROTECCIÓN ACTIVADO.
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Trades -->
+        <div class="mt-8 bg-slate-800/30 rounded-xl border border-slate-700 overflow-hidden">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-800 text-slate-400 uppercase">
+                    <tr>
+                        <th class="p-4">Fecha/Macro</th>
+                        <th class="p-4">Gatillo</th>
+                        <th class="p-4 text-center">Psicología</th>
+                        <th class="p-4">MFE (Pts)</th>
+                        <th class="p-4 text-right">Resultado</th>
+                    </tr>
+                </thead>
+                <tbody id="trade-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
