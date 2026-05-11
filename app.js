@@ -1,5 +1,8 @@
-// CONFIGURACIÓN: Pega aquí la URL de tu Apps Script
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwIzl_Hc_TIfNodaThHIRexJz4-Ktv_H-vUyPxhZcF0vbi7gr7IsUM56-7BtGlQ9w/exec";
+// Ahora usamos la constante CONFIG que definimos en el otro archivo
+const APPS_SCRIPT_URL = CONFIG.APPS_SCRIPT_URL;
+const GEMINI_API_KEY = CONFIG.GEMINI_API_KEY;
+
+// El resto de tus funciones (syncData, runAICoach, etc.) se mantienen igual
 
 let equityChart;
 
