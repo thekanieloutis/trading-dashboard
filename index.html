@@ -3,137 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FundedMetrics - Estilo TradeZella</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Selector de Diseño - Funded AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Iconos -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .bento-card { background: #111827; border: 1px solid #1f2937; border-radius: 16px; transition: all 0.3s ease; }
+        .bento-card:hover { border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.1); }
+    </style>
 </head>
-<body class="bg-tz-dark text-tz-text font-sans flex h-screen overflow-hidden">
+<body class="bg-[#070a12] text-slate-300 min-h-screen flex flex-col">
 
-    <!-- Sidebar Estilo TradeZella -->
-    <aside class="w-64 bg-tz-panel border-r border-tz-border flex flex-col hidden md:flex">
-        <div class="p-6 border-b border-tz-border">
-            <h1 class="text-xl font-black text-white tracking-wider"><i class="fa-solid fa-chart-line text-tz-blue mr-2"></i>FUNDED<span class="text-tz-blue">AI</span></h1>
-        </div>
-        <nav class="flex-1 p-4 space-y-2">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-tz-blue/10 text-tz-blue rounded-lg font-semibold transition">
-                <i class="fa-solid fa-border-all"></i> Dashboard
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg font-semibold transition">
-                <i class="fa-solid fa-book"></i> Journal
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg font-semibold transition">
-                <i class="fa-solid fa-brain"></i> AI Coach
-            </a>
-        </nav>
-        <div class="p-4 border-t border-tz-border">
-            <div class="flex items-center gap-3 px-4 py-2 text-sm text-slate-400">
-                <div class="w-2 h-2 rounded-full bg-tz-green animate-pulse"></div> Live Sync Activo
+    <!-- Selector de interfaz superior (Solo para que elijas el diseño) -->
+    <div class="bg-slate-900 border-b border-slate-800 p-4 flex justify-center gap-4 sticky top-0 z-50">
+        <button onclick="switchView('bento')" id="btn-bento" class="px-6 py-2 rounded-lg font-bold text-sm bg-sky-600 text-white shadow-lg transition">
+            <i class="fa-solid fa-table-cells-large mr-2"></i> Opción A: Bento Grid
+        </button>
+        <button onclick="switchView('minimal')" id="btn-minimal" class="px-6 py-2 rounded-lg font-bold text-sm bg-slate-800 text-slate-400 hover:text-white transition">
+            <i class="fa-solid fa-terminal mr-2"></i> Opción B: Minimalista
+        </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VISTA A: BENTO GRID                        -->
+    <!-- ========================================== -->
+    <div id="view-bento" class="p-6 max-w-7xl mx-auto w-full space-y-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-black text-white tracking-tight">MÉTRICAS CORE <span class="text-sky-500">BENTO</span></h2>
+                <p class="text-xs text-slate-500">Estructura organizada por bloques proporcionales</p>
             </div>
         </div>
-    </aside>
 
-    <!-- Contenido Principal -->
-    <main class="flex-1 flex flex-col h-screen overflow-y-auto">
-        <!-- Topbar -->
-        <header id="main-header" class="bg-tz-panel border-b border-tz-border px-8 py-4 flex justify-between items-center z-10 sticky top-0 transition-colors duration-500">
-            <div class="flex gap-4">
-                <!-- Botones de Filtro Interactivos -->
-                <button onclick="filterData('all')" class="filter-btn active px-4 py-1.5 rounded-md text-sm font-semibold text-white bg-slate-700">Todas</button>
-                <button onclick="filterData('win')" class="filter-btn px-4 py-1.5 rounded-md text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800">Ganadoras</button>
-                <button onclick="filterData('loss')" class="filter-btn px-4 py-1.5 rounded-md text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800">Perdedoras</button>
-                <button onclick="filterData('psych')" class="filter-btn px-4 py-1.5 rounded-md text-sm font-semibold text-tz-blue bg-tz-blue/10 border border-tz-blue/30 shadow-[0_0_10px_rgba(59,130,246,0.2)]">Psicología ≥ 8</button>
-            </div>
-            <button onclick="syncData()" class="bg-tz-blue hover:bg-blue-500 text-white px-5 py-2 rounded-lg font-bold transition shadow-lg flex items-center gap-2">
-                <i class="fa-solid fa-rotate"></i> Sincronizar
-            </button>
-        </header>
-
-        <div class="p-8">
-            <!-- Mensaje de Alerta -->
-            <div id="warning-msg" class="hidden mb-6 p-4 bg-tz-red/20 border border-tz-red text-tz-red text-sm font-bold rounded-lg flex items-center gap-3">
-                <i class="fa-solid fa-triangle-exclamation text-xl"></i> ALERTA DEL COACH: Disciplina comprometida por fatiga. Cerrar plataforma.
+        <!-- Grid de Bloques -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Caja 1: KPIs -->
+            <div class="bento-card p-6 flex flex-col justify-between">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Balance Comercial</span>
+                <div class="my-4">
+                    <div class="text-4xl font-black text-emerald-400">+$4,850.50</div>
+                    <div class="text-sm text-slate-400 mt-1">Win Rate: <span class="text-sky-400 font-bold">68.2%</span></div>
+                </div>
+                <span class="text-[11px] text-slate-500 border-t border-slate-800 pt-2">Basado en datos de cuenta fondeada</span>
             </div>
 
-            <!-- KPIs -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="tz-card p-6">
-                    <p class="tz-label">Net P&L</p>
-                    <p id="stat-pl" class="text-3xl font-black text-white mt-1">$0.00</p>
+            <!-- Caja 2: Proceso Psicológico -->
+            <div class="bento-card p-6 flex flex-col justify-between border-l-4 border-l-emerald-500">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Métricas de Disciplina</span>
+                <div class="my-4">
+                    <div class="text-4xl font-black text-white">8.8<span class="text-lg text-slate-600">/10</span></div>
+                    <div class="text-sm text-emerald-400 mt-1"><i class="fa-solid fa-brain mr-1"></i> Zona de Alta Consistencia</div>
                 </div>
-                <div class="tz-card p-6">
-                    <p class="tz-label">Win Rate</p>
-                    <p id="stat-wr" class="text-3xl font-black text-tz-blue mt-1">0%</p>
-                </div>
-                <div class="tz-card p-6 relative overflow-hidden">
-                    <div class="absolute right-0 top-0 w-16 h-full bg-gradient-to-l from-tz-green/20 to-transparent"></div>
-                    <p class="tz-label">Avg Psicología</p>
-                    <p id="stat-psych" class="text-3xl font-black text-tz-green mt-1">0<span class="text-lg text-slate-500">/10</span></p>
-                </div>
-                <div class="tz-card p-6">
-                    <p class="tz-label">Eficiencia MFE Promedio</p>
-                    <p id="stat-mfe" class="text-3xl font-black text-white mt-1">0%</p>
-                </div>
+                <span class="text-[11px] text-slate-500 border-t border-slate-800 pt-2">Fatiga laboral actual: <span class="text-emerald-400 font-bold">BAJA</span></span>
             </div>
 
-            <!-- Gráfico y Coach -->
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-                <div class="xl:col-span-2 tz-card p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-bold text-white">Curva de Equidad</h3>
-                        <div class="flex gap-2">
-                            <span class="w-3 h-3 rounded-full bg-tz-blue mt-1.5"></span>
-                            <span class="text-sm text-slate-400">Balance Acumulado</span>
-                        </div>
-                    </div>
-                    <div class="relative h-[250px] w-full">
-                        <canvas id="equityChart"></canvas>
-                    </div>
+            <!-- Caja 3: Coach AI -->
+            <div class="bento-card p-6 bg-gradient-to-br from-slate-900 to-slate-950 border-t-4 border-t-sky-500 md:col-span-1">
+                <div class="flex items-center gap-2 text-sky-400 font-bold text-sm mb-2">
+                    <i class="fa-solid fa-robot"></i> AI COACH VERDICT
                 </div>
-
-                <!-- AI Coach Panel -->
-                <div class="tz-card p-6 border-t-4 border-t-tz-blue flex flex-col">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-full bg-tz-blue/20 flex items-center justify-center text-tz-blue text-xl">
-                            <i class="fa-solid fa-robot"></i>
-                        </div>
-                        <h3 class="font-bold text-white text-lg">AI Insights</h3>
-                    </div>
-                    <div id="ai-verdict" class="flex-1 text-sm text-slate-300 leading-relaxed bg-tz-panel rounded-lg p-4 border border-tz-border italic">
-                        Esperando sincronización de datos para analizar vaciado mental y gatillos técnicos...
-                    </div>
-                </div>
+                <p class="text-xs text-slate-300 leading-relaxed italic">
+                    "Tu última sesión fue excelente. Aunque el profit fue moderado, mantuviste la Psicología en 10/10 respetando la Macro de las 12:00. Buen manejo técnico y de riesgo tras tu turno de trabajo."
+                </p>
             </div>
 
-            <!-- Tabla -->
-            <div class="tz-card overflow-hidden">
-                <div class="p-6 border-b border-tz-border flex justify-between items-center">
-                    <h3 class="font-bold text-white text-lg">Registro Detallado</h3>
-                </div>
+            <!-- Caja 4: Tabla de Operaciones (Ocupa dos columnas) -->
+            <div class="bento-card p-6 md:col-span-3 overflow-hidden">
+                <h3 class="text-sm font-bold text-white mb-4 uppercase tracking-wider">Historial Operativo Completo</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-tz-panel text-slate-400 text-xs uppercase tracking-wider">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-900 text-slate-500 uppercase font-bold border-b border-slate-800">
                             <tr>
-                                <th class="py-4 px-6 font-semibold">Fecha / Macro</th>
-                                <th class="py-4 px-6 font-semibold">Gatillo Técnico</th>
-                                <th class="py-4 px-6 font-semibold text-center">Psicología</th>
-                                <th class="py-4 px-6 font-semibold">MFE Real</th>
-                                <th class="py-4 px-6 font-semibold text-right">Net P&L</th>
+                                <th class="p-3">Fecha / Macro</th>
+                                <th class="p-3">Gatillo Técnico</th>
+                                <th class="p-3 text-center">Psicología</th>
+                                <th class="p-3">MFE Real</th>
+                                <th class="p-3 text-right">Net P&L</th>
                             </tr>
                         </thead>
-                        <tbody id="trade-table-body" class="divide-y divide-tz-border">
-                            <!-- Filas dinámicas -->
+                        <tbody class="divide-y divide-slate-800/60">
+                            <tr class="hover:bg-slate-800/20">
+                                <td class="p-3 font-semibold text-white">2026-05-12 <br><span class="text-sky-500 text-[10px]">Macro 12:00</span></td>
+                                <td class="p-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-slate-400">NQ | SMT Div</span></td>
+                                <td class="p-3 text-center"><span class="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-bold">10/10</span></td>
+                                <td class="p-3 text-slate-400 font-mono">92 pts</td>
+                                <td class="p-3 text-right font-bold text-emerald-400">+$600.00</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- El orden de estos scripts es fundamental -->
-    <script src="config.js"></script>
-    <script src="app.js"></script>
+    <!-- ========================================== -->
+    <!-- VISTA B: MINIMALISTA DE ALTO CONTRASTE     -->
+    <!-- ========================================== -->
+    <div id="view-minimal" class="p-8 max-w-7xl mx-auto w-full hidden font-mono space-y-8">
+        <!-- Header tipo terminal -->
+        <div class="border-b border-zinc-800 pb-4">
+            <div class="text-xs text-zinc-500">// METRICS_CORE // RUNNING_SESSION // ALL_FIELDS_ACTIVE</div>
+            <div class="text-lg font-bold text-zinc-100 mt-1">OPERATIVA_FUNDED_CONSOLE</div>
+        </div>
+
+        <!-- Bloque de Métricas en Línea -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 py-4 border-b border-zinc-800 text-sm">
+            <div><span class="text-zinc-600">P&L:</span> <span class="text-emerald-400 font-bold">+$4,850.50</span></div>
+            <div><span class="text-zinc-600">WR:</span> <span class="text-zinc-300">68.2%</span></div>
+            <div><span class="text-zinc-600">PSYCH:</span> <span class="text-emerald-400">8.8/10</span></div>
+            <div><span class="text-zinc-600">MFE_EFF:</span> <span class="text-zinc-300">78%</span></div>
+            <div><span class="text-zinc-600">STATUS:</span> <span class="text-zinc-400">DICIPlINADO</span></div>
+        </div>
+
+        <!-- Consola de la IA -->
+        <div class="bg-zinc-950 border border-zinc-800 p-4 rounded text-xs space-y-1">
+            <div class="text-zinc-500">[AI_COACH_FEEDBACK] -----------------------------------------------------</div>
+            <div class="text-zinc-300"><span class="text-sky-400">&gt;</span> Monitoreando registros de cansancio. No se detectan anomalías críticas hoy.</div>
+            <div class="text-zinc-400"><span class="text-sky-400">&gt;</span> Recordatorio: Tu patrón técnico se repite constantemente. Mantén la paciencia en las macros.</div>
+        </div>
+
+        <!-- Log de Datos Crudos -->
+        <div class="space-y-4">
+            <div class="text-xs text-zinc-500">[RAW_DATA_LOG] --------------------------------------------------------</div>
+            
+            <!-- Entrada 1 -->
+            <div class="text-xs border-l-2 border-zinc-700 pl-4 py-1">
+                <div class="flex justify-between font-bold text-zinc-300">
+                    <span>2026-05-12 // MACRO_12:00 // NQ // GATILLO: SMT_DIV</span>
+                    <span class="text-emerald-400">+$600.00 (PSYCH: 10/10)</span>
+                </div>
+                <p class="text-zinc-500 mt-1 italic">"Notas: Esperé pacientemente la divergencia con el ES. Cero ansiedad durante la gestión. MFE: 92pts."</p>
+            </div>
+
+            <!-- Entrada 2 -->
+            <div class="text-xs border-l-2 border-red-900 pl-4 py-1">
+                <div class="flex justify-between font-bold text-zinc-300">
+                    <span>2026-05-11 // MACRO_12:30 // ES // GATILLO: LIQ_SWEEP</span>
+                    <span class="text-red-400">-$200.00 (PSYCH: 4/10)</span>
+                </div>
+                <p class="text-zinc-500 mt-1 italic">"Notas: Corazón acelerado tras salir tarde del trabajo. Entré antes por miedo a quedarme fuera de la expansión. MFE: 10pts."</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Control de Vistas -->
+    <script>
+        function switchView(view) {
+            const bentoView = document.getElementById('view-bento');
+            const minimalView = document.getElementById('view-minimal');
+            const btnBento = document.getElementById('btn-bento');
+            const btnMinimal = document.getElementById('btn-minimal');
+
+            if (view === 'bento') {
+                bentoView.classList.remove('hidden');
+                minimalView.classList.add('hidden');
+                btnBento.className = "px-6 py-2 rounded-lg font-bold text-sm bg-sky-600 text-white shadow-lg transition";
+                btnMinimal.className = "px-6 py-2 rounded-lg font-bold text-sm bg-slate-800 text-slate-400 hover:text-white transition";
+            } else {
+                bentoView.classList.add('hidden');
+                minimalView.classList.remove('hidden');
+                btnBento.className = "px-6 py-2 rounded-lg font-bold text-sm bg-slate-800 text-slate-400 hover:text-white transition";
+                btnMinimal.className = "px-6 py-2 rounded-lg font-bold text-sm bg-zinc-100 text-zinc-900 shadow-lg transition";
+            }
+        }
+    </script>
 </body>
 </html>
