@@ -1,41 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
 
 body {
     font-family: 'Inter', sans-serif;
+    background-color: #090d16;
 }
 
-/* Tarjetas Bento Estilo Premium */
-.bento-card {
-    background: #0f172a;
-    border: 1px solid #1e293b;
-    border-radius: 20px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+.td-card {
+    background-color: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
 }
 
-.bento-card:hover {
-    border-color: #38bdf8;
-    box-shadow: 0 0 25px rgba(56, 189, 248, 0.1);
-}
-
-.bento-title {
+.td-label {
     font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     color: #64748b;
     font-weight: 700;
 }
 
-/* Animación de alerta para evitar Modo Venganza */
-.pulse-danger {
-    animation: alert-flash 1.5s infinite;
-}
-
-@keyframes alert-flash {
-    0% { background-color: #0f172a; border-color: #1e293b; }
-    50% { background-color: rgba(244, 63, 94, 0.08); border-color: #f43f5e; }
-    100% { background-color: #0f172a; border-color: #1e293b; }
-}
-
-.win { color: #34d399; }
-.loss { color: #f43f5e; }
+.win-text { color: #00e676; }
+.loss-text { color: #f43f5e; }
