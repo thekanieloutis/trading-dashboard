@@ -1,189 +1,154 @@
 const APPS_SCRIPT_URL = CONFIG.APPS_SCRIPT_URL;
 const GEMINI_API_KEY = CONFIG.GEMINI_API_KEY;
 
-let globalData = [];
-let equityChart;
+let tradesDatabase = [];
+let chartInstance;
 
-// Iniciar aplicación
-window.onload = syncData;
+window.onload = syncFromSheets;
 
-async function syncData() {
+async function syncFromSheets() {
     const verdict = document.getElementById('ai-verdict');
-    verdict.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Procesando notas mentales y métricas de MFE...';
+    verdict.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-sky-500 mr-2"></i> Conectando con tus Métricas Funded...';
     
     try {
-        const response = await fetch(APPS_SCRIPT_URL);
+        const response = await fetch(GOOGLE_SHEET_URL);
         const data = await response.json();
         
-        if(data.error) throw new Error(data.error);
-
-        globalData = data.filter(t => t["Resultado ($)"] !== undefined && t["Resultado ($)"] !== ""); 
+        // Filtrar filas vacías
+        tradesDatabase = data.filter(t => t["Resultado ($)"] !== undefined && t["Resultado ($)"] !== "");
         
-        processAndRender(globalData);
-        runAICoach(globalData);
-        
+        renderBento(tradesDatabase);
+        runGlobalCoach(tradesDatabase);
     } catch (e) {
-        console.error("Error conectando a Sheets:", e);
-        verdict.innerHTML = `<span class="text-tz-red"><i class="fa-solid fa-circle-xmark"></i> Error de conexión. Revisa el enlace de Apps Script.</span>`;
+        console.error(e);
+        verdict.innerHTML = '<span class="text-rose-400">❌ Error de conexión. Verifica la configuración de tu Apps Script.</span>';
     }
 }
 
-// Botones de Filtrado Interactivo
-function filterData(type) {
-    // Actualizar estilos de botones
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('bg-slate-700', 'text-white');
-        btn.classList.add('text-slate-400', 'hover:bg-slate-800');
-    });
-    event.target.classList.add('bg-slate-700', 'text-white');
-    event.target.classList.remove('text-slate-400', 'hover:bg-slate-800');
-
-    // Lógica de filtrado
-    let filtered = [];
-    if (type === 'all') filtered = globalData;
-    if (type === 'win') filtered = globalData.filter(t => parseFloat(t["Resultado ($)"]) > 0);
-    if (type === 'loss') filtered = globalData.filter(t => parseFloat(t["Resultado ($)"]) <= 0);
-    if (type === 'psych') filtered = globalData.filter(t => parseInt(t["Psicología (1-10)"]) >= 8);
-
-    processAndRender(filtered);
-}
-
-function processAndRender(dataToRender) {
+function renderBento(data) {
     const tbody = document.getElementById('trade-table-body');
     tbody.innerHTML = '';
     
     let totalPl = 0;
-    let psychAcc = 0;
+    let psychSum = 0;
+    let mfeSum = 0;
     let wins = 0;
+    let grossProfits = 0;
+    let grossLosses = 0;
     let equityPoints = [];
 
-    dataToRender.forEach(trade => {
+    data.forEach((trade, index) => {
         const pl = parseFloat(trade["Resultado ($)"]) || 0;
         const psych = parseInt(trade["Psicología (1-10)"]) || 0;
-        const mfe = trade["MFE (Pts)"] || "-";
+        const mfe = parseFloat(trade["MFE (Pts)"]) || 0;
         
         totalPl += pl;
-        psychAcc += psych;
-        if (pl > 0) wins++;
+        psychSum += psych;
+        mfeSum += mfe; // Asumiendo cálculo simplificado de puntos acumulados
+        
+        if (pl > 0) {
+            wins++;
+            grossProfits += pl;
+        } else {
+            grossLosses += Math.abs(pl);
+        }
         
         equityPoints.push(totalPl);
 
-        // Formateo de moneda
-        const plString = pl >= 0 ? `+$${pl.toFixed(2)}` : `-$${Math.abs(pl).toFixed(2)}`;
-        const plClass = pl >= 0 ? 'text-tz-green' : 'text-tz-red';
-
         tbody.innerHTML += `
-            <tr class="hover:bg-slate-800/30 transition-colors group">
-                <td class="py-4 px-6 border-b border-tz-border text-slate-300">
-                    <div class="font-semibold">${trade.Fecha || 'N/A'}</div>
-                    <div class="text-xs text-tz-blue opacity-70 group-hover:opacity-100 transition">${trade.Macro || 'Macro no definida'}</div>
-                </td>
-                <td class="py-4 px-6 border-b border-tz-border">
-                    <span class="pill neutral"><i class="fa-solid fa-crosshairs mr-1"></i> ${trade.Gatillo || 'N/A'}</span>
-                </td>
-                <td class="py-4 px-6 border-b border-tz-border text-center">
-                    <span class="pill ${psych >= 8 ? 'green' : (psych <= 4 ? 'red' : 'neutral')}">
+            <tr onclick="inspectTrade(${index})" class="hover:bg-slate-800/40 cursor-pointer transition border-b border-slate-800/50">
+                <td class="p-4 font-semibold text-white">${trade.Fecha}<br><span class="text-[10px] text-sky-500 font-normal">${trade.Macro || 'Sin Macro'}</span></td>
+                <td class="p-4 text-slate-400">${trade.Instrumento || 'N/A'}</td>
+                <td class="p-4"><span class="bg-slate-900 text-slate-400 border border-slate-800 px-2 py-0.5 rounded">${trade.Gatillo || 'N/A'}</span></td>
+                <td class="p-4 text-center">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${psych >= 8 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
                         ${psych}/10
                     </span>
                 </td>
-                <td class="py-4 px-6 border-b border-tz-border text-slate-400 font-mono text-sm">
-                    ${mfe} pts
-                </td>
-                <td class="py-4 px-6 border-b border-tz-border text-right font-bold ${plClass}">
-                    ${plString}
-                </td>
+                <td class="p-4 text-right font-mono text-slate-400">${mfe} pts</td>
+                <td class="p-4 text-right font-bold ${pl >= 0 ? 'win' : 'loss'}">${pl >= 0 ? '+$' : '-$'}${Math.abs(pl).toFixed(2)}</td>
             </tr>
         `;
     });
 
-    // Actualizar KPIs de la UI
+    // Actualizar Tarjetas KPI
     document.getElementById('stat-pl').innerText = totalPl >= 0 ? `+$${totalPl.toFixed(2)}` : `-$${Math.abs(totalPl).toFixed(2)}`;
-    document.getElementById('stat-pl').className = `text-3xl font-black mt-1 ${totalPl >= 0 ? 'text-white' : 'text-tz-red'}`;
+    document.getElementById('stat-pl').className = `text-4xl font-black my-4 ${totalPl >= 0 ? 'text-emerald-400' : 'text-rose-500'}`;
+    document.getElementById('stat-wr').innerText = data.length > 0 ? `${((wins / data.length) * 100).toFixed(1)}%` : '0%';
+    document.getElementById('stat-psych').innerHTML = data.length > 0 ? `${(psychSum / data.length).toFixed(1)}<span class="text-lg text-slate-600">/10</span>` : '0.0';
     
-    const winRate = dataToRender.length > 0 ? ((wins / dataToRender.length) * 100).toFixed(1) : 0;
-    document.getElementById('stat-wr').innerText = `${winRate}%`;
-    
-    const avgPsych = dataToRender.length > 0 ? (psychAcc / dataToRender.length).toFixed(1) : 0;
-    document.getElementById('stat-psych').innerHTML = `${avgPsych}<span class="text-lg text-slate-500">/10</span>`;
+    const pf = grossLosses > 0 ? (grossProfits / grossLosses).toFixed(2) : totalPl > 0 ? totalPl.toFixed(2) : "0.00";
+    document.getElementById('stat-pf').innerText = pf;
 
-    updateChart(equityPoints);
+    renderChart(equityPoints);
 }
 
-function updateChart(points) {
-    const ctx = document.getElementById('equityChart').getContext('2d');
+function filterTrades(type) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('bg-sky-600', 'text-white'));
+    event.target.classList.add('bg-sky-600', 'text-white');
     
-    if (equityChart) equityChart.destroy();
+    if (type === 'all') renderBento(tradesDatabase);
+    if (type === 'psych') renderBento(tradesDatabase.filter(t => parseInt(t["Psicología (1-10)"]) >= 8));
+}
 
-    // Crear un gradiente debajo de la línea
-    let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)'); // tz-blue
-    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+function inspectTrade(index) {
+    const trade = tradesDatabase[index];
+    const verdict = document.getElementById('ai-verdict');
+    const notes = trade.Observaciones || "Sin anotaciones en tu vaciado mental para esta sesión.";
+    
+    verdict.innerHTML = `
+        <div class="space-y-2">
+            <div class="text-[10px] text-sky-400 font-bold uppercase tracking-wider">Análisis del Trade Especializado:</div>
+            <p class="text-white font-semibold">Gatillo: ${trade.Gatillo || 'N/A'} en ${trade.Instrumento || 'N/A'}</p>
+            <p class="text-slate-400 mt-1">"${notes}"</p>
+            <div class="pt-2 text-[10px] text-slate-500 border-t border-slate-800">Psicología registrada: ${trade["Psicología (1-10)"]}/10 | Recorrido MFE: ${trade["MFE (Pts)"]} pts.</div>
+        </div>
+    `;
+}
 
-    equityChart = new Chart(ctx, {
+function runGlobalCoach(data) {
+    const header = document.getElementById('main-header');
+    const warning = document.getElementById('warning-pill');
+    const lastThree = data.slice(-3);
+    const lowPsych = lastThree.filter(t => parseInt(t["Psicología (1-10)"]) < 5).length;
+
+    if (lowPsych >= 2) {
+        header.classList.add('pulse-danger');
+        warning.classList.remove('hidden');
+        warning.innerText = "⚠️ ALERTA: SECUENCIA DE BAJA DISCIPLINA DETECTADA. REVISA TU FATIGA.";
+    } else {
+        header.classList.remove('pulse-danger');
+        warning.classList.add('hidden');
+    }
+}
+
+function renderChart(points) {
+    const ctx = document.getElementById('equityChart').getContext('2d');
+    if (chartInstance) chartInstance.destroy();
+
+    let gradient = ctx.createLinearGradient(0, 0, 0, 200);
+    gradient.addColorStop(0, 'rgba(14, 165, 233, 0.3)');
+    gradient.addColorStop(1, 'rgba(14, 165, 233, 0.0)');
+
+    chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: points.map((_, i) => `Trade ${i + 1}`),
+            labels: points.map((_, i) => `T ${i + 1}`),
             datasets: [{
-                label: 'Net P&L',
                 data: points,
-                borderColor: '#3b82f6',
+                borderColor: '#0ea5e9',
                 borderWidth: 3,
                 backgroundColor: gradient,
                 fill: true,
-                tension: 0.4, // Curvas suaves
-                pointBackgroundColor: '#0a0e17',
-                pointBorderColor: '#3b82f6',
-                pointBorderWidth: 2,
-                pointRadius: 3,
-                pointHoverRadius: 6
+                tension: 0.3,
+                pointRadius: 2
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: '#111827',
-                    titleColor: '#94a3b8',
-                    bodyColor: '#fff',
-                    borderColor: '#1f2937',
-                    borderWidth: 1,
-                    padding: 12,
-                    displayColors: false
-                }
-            },
-            scales: {
-                y: { grid: { color: '#1f2937', drawBorder: false }, ticks: { color: '#64748b' } },
-                x: { display: false }
-            }
+            plugins: { legend: { display: false } },
+            scales: { y: { grid: { color: '#1e293b' } }, x: { grid: { display: false } } }
         }
     });
-}
-
-function runAICoach(data) {
-    if(data.length === 0) return;
-    
-    const lastThree = data.slice(-3);
-    const lowPsychCount = lastThree.filter(t => parseInt(t["Psicología (1-10)"]) < 5).length;
-    
-    const verdict = document.getElementById('ai-verdict');
-    const warning = document.getElementById('warning-msg');
-    const header = document.getElementById('main-header');
-
-    if (lowPsychCount >= 2) {
-        // Alerta de Zombie Mode activada
-        header.classList.add('animate-bg-danger');
-        warning.classList.remove('hidden');
-        verdict.innerHTML = `<span class="text-tz-red font-bold">Modo Venganza / Fatiga Detectado.</span> Tus últimas operaciones muestran niveles de disciplina muy bajos. Aléjate de los gráficos y revisa si es por tu turno de 12 horas.`;
-    } else {
-        header.classList.remove('animate-bg-danger');
-        warning.classList.add('hidden');
-        const last = data[data.length-1];
-        if (parseInt(last["Psicología (1-10)"]) >= 8) {
-            verdict.innerHTML = `<span class="text-tz-green font-bold">¡Excelente Disciplina!</span> Tu última operación tuvo un ${last["Psicología (1-10)"]}/10. Respetaste el proceso. Este es el camino para fondear tu cuenta, el resultado monetario hoy es secundario.`;
-        } else {
-            verdict.innerHTML = `Tu última sesión fue estándar. Mantén el foco en la paciencia y espera la toma de liquidez en las macros.`;
-        }
-    }
 }
