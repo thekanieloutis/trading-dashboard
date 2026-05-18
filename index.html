@@ -3,104 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Funded AI - Bento Dashboard</title>
+    <title>Funded Journal - Tradync Style</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-[#070a13] text-slate-300 min-h-screen p-4 md:p-8">
+<body class="bg-[#090d16] text-[#94a3b8] min-h-screen p-4 md:p-8">
 
     <div class="max-w-7xl mx-auto space-y-6">
         
-        <!-- Header Principal -->
-        <header id="main-header" class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-[#0f172a] border border-slate-800 rounded-2xl gap-4 transition-all duration-500">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-[#111827] border border-[#1f2937] rounded-xl gap-4">
             <div>
-                <h1 class="text-2xl font-black text-white tracking-tight">MÉTRICAS FUNDED <span class="text-sky-500">AI</span></h1>
-                <p class="text-xs text-slate-500 mt-0.5">Estructura Bento optimizada para control de disciplina</p>
+                <div class="text-xs text-emerald-400 font-bold flex items-center gap-1.5 mb-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> En vivo
+                </div>
+                <h1 class="text-xl font-black text-white tracking-tight">Dashboard <span class="text-xs font-normal text-slate-500">/ Resumen de tu performance</span></h1>
             </div>
-            <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                <button onclick="filterTrades('all')" class="filter-btn active bg-slate-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Todos</button>
-                <button onclick="filterTrades('psych')" class="filter-btn bg-slate-900 text-slate-400 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition">Psicología ≥ 8</button>
-                <button onclick="syncFromSheets()" class="bg-sky-600 hover:bg-sky-500 text-white px-5 py-2 rounded-xl text-xs font-bold transition ml-auto sm:ml-2 flex items-center gap-2">
-                    <i class="fa-solid fa-rotate"></i> Sincronizar
-                </button>
-            </div>
+            <button onclick="syncFromSheets()" class="bg-[#00e676] hover:bg-[#00c853] text-[#090d16] px-5 py-2 rounded-lg text-xs font-black transition tracking-wider uppercase flex items-center gap-2 shadow-[0_0_15px_rgba(0,230,118,0.2)]">
+                <i class="fa-solid fa-rotate"></i> Actualizar datos
+            </button>
         </header>
 
-        <!-- Contenedor Bento Principal -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <!-- Caja 1: Rendimiento Económico -->
-            <div class="bento-card p-6 flex flex-col justify-between">
-                <div>
-                    <span class="bento-title">Rendimiento Comercial</span>
-                    <div id="stat-pl" class="text-4xl font-black my-4 text-white">$0.00</div>
-                </div>
-                <div class="flex justify-between border-t border-slate-800/80 pt-4 text-xs text-slate-400">
-                    <span>Win Rate: <strong id="stat-wr" class="text-sky-400">0%</strong></span>
-                    <span>Profit Factor: <strong id="stat-pf" class="text-white">0.00</strong></span>
-                </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="td-card p-5">
+                <p class="td-label">P&L Total</p>
+                <p id="stat-pl" class="text-2xl font-black text-white mt-2">$0.00</p>
             </div>
-
-            <!-- Caja 2: Control de Disciplina -->
-            <div class="bento-card p-6 flex flex-col justify-between border-l-4 border-l-emerald-500">
-                <div>
-                    <span class="bento-title">Índice de Disciplina</span>
-                    <div id="stat-psych" class="text-4xl font-black my-4 text-white">0.0<span class="text-lg text-slate-600">/10</span></div>
-                </div>
-                <div class="flex justify-between border-t border-slate-800/80 pt-4 text-xs text-slate-400">
-                    <span>Eficiencia MFE: <strong id="stat-mfe" class="text-emerald-400">0%</strong></span>
-                    <span id="fatigue-indicator" class="text-slate-500">Análisis de fatiga listo</span>
-                </div>
+            <div class="td-card p-5">
+                <p class="td-label">Win Rate</p>
+                <p id="stat-wr" class="text-2xl font-black text-white mt-2">0.0%</p>
             </div>
-
-            <!-- Caja 3: AI Coach Dinámico -->
-            <div id="coach-box" class="bento-card p-6 bg-gradient-to-br from-[#0f172a] to-[#090d16] border-t-4 border-t-sky-500 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center gap-2 text-sky-400 font-bold text-xs uppercase tracking-wider mb-3">
-                        <i class="fa-solid fa-robot text-sm animate-bounce"></i> Diagnóstico del AI Coach
-                    </div>
-                    <p id="ai-verdict" class="text-xs text-slate-300 leading-relaxed italic">
-                        Sincroniza tus datos para escanear tus sesiones y procesar tu Vaciado Mental.
-                    </p>
-                </div>
-                <div id="warning-pill" class="hidden mt-4 p-2 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[10px] font-bold rounded-lg text-center">
-                    ⚠️ CRÍTICO: Fatiga o indisciplina detectada.
-                </div>
+            <div class="td-card p-5">
+                <p class="td-label">Profit Factor</p>
+                <p id="stat-pf" class="text-2xl font-black text-white mt-2">0.00</p>
             </div>
+            <div class="td-card p-5">
+                <p class="td-label">Avg Psicología</p>
+                <p id="stat-psych" class="text-2xl font-black text-white mt-2">0.0<span class="text-xs text-slate-500">/10</span></p>
+            </div>
+        </div>
 
-            <!-- Caja 4: Gráfico de Equidad (Ancho completo) -->
-            <div class="bento-card p-6 md:col-span-3">
-                <span class="bento-title mb-4 block">Curva de Equidad vs Consistencia</span>
-                <div class="h-[220px] w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 td-card p-6">
+                <span class="td-label block mb-4">Curva de Equity</span>
+                <div class="h-[240px] w-full">
                     <canvas id="equityChart"></canvas>
                 </div>
             </div>
 
-            <!-- Caja 5: Registro Operativo Detallado -->
-            <div class="bento-card p-6 md:col-span-3 overflow-hidden">
-                <span class="bento-title mb-4 block">Historial de Operaciones (Haz clic en una fila para analizarla)</span>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-900/60 text-slate-500 uppercase font-bold tracking-wider border-b border-slate-800">
-                            <tr>
-                                <th class="p-4">Fecha / Macro</th>
-                                <th class="p-4">Instrumento</th>
-                                <th class="p-4">Gatillo</th>
-                                <th class="p-4 text-center">Psicología</th>
-                                <th class="p-4 text-right">MFE</th>
-                                <th class="p-4 text-right">Resultado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="trade-table-body" class="divide-y divide-slate-800/40">
-                            <!-- Filas inyectadas por JS -->
-                        </tbody>
-                    </table>
+            <div class="td-card p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider mb-4">
+                        <i class="fa-solid fa-bolt"></i> Métricas por Sesión
+                    </div>
+                    <div class="space-y-3 text-xs">
+                        <div class="flex justify-between border-b border-[#1f2937] pb-2">
+                            <span class="text-slate-400">Macro 12:00 (Apertura NY)</span>
+                            <span id="session-1200" class="font-bold text-white">0 ops</span>
+                        </div>
+                        <div class="flex justify-between border-b border-[#1f2937] pb-2">
+                            <span class="text-slate-400">Macro 12:30 (Mid-Macro)</span>
+                            <span id="session-1230" class="font-bold text-white">0 ops</span>
+                        </div>
+                        <div class="flex justify-between border-b border-[#1f2937] pb-2">
+                            <span class="text-slate-400">Otras Ventanas</span>
+                            <span id="session-other" class="font-bold text-white">0 ops</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-3 bg-[#111827] border border-[#1f2937] rounded-lg">
+                    <div class="text-[10px] uppercase tracking-wider text-sky-400 font-bold mb-1">AI Coach Insight:</div>
+                    <p id="ai-verdict" class="text-[11px] text-slate-400 italic leading-relaxed">Sincroniza para analizar tu comportamiento frente al cansancio técnico.</p>
                 </div>
             </div>
-
         </div>
+
+        <div class="td-card overflow-hidden">
+            <div class="p-5 border-b border-[#1f2937]">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Operaciones Recientes</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-[#111827] text-slate-400 uppercase tracking-wider font-semibold">
+                        <tr>
+                            <th class="p-4">Fecha / Macro</th>
+                            <th class="p-4">Símbolo</th>
+                            <th class="p-4">Gatillo</th>
+                            <th class="p-4 text-center">Psicología</th>
+                            <th class="p-4 text-right">MFE Real</th>
+                            <th class="p-4 text-right">Net P&L</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trade-table-body" class="divide-y divide-[#1f2937]">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
     <script src="config.js"></script>
     <script src="app.js"></script>
