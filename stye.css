@@ -1,69 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
-
-:root {
-    --bg-dark: #0a0e17; /* Fondo principal muy oscuro */
-    --bg-panel: #111827; /* Fondo de tarjetas */
-    --border-color: #1f2937; /* Bordes sutiles */
-    --text-main: #94a3b8;
-    --tz-blue: #3b82f6;
-    --tz-green: #10b981;
-    --tz-red: #ef4444;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: var(--bg-dark);
-    color: var(--text-main);
 }
 
-/* Clases utilitarias personalizadas para imitar Tailwind config si es necesario */
-.bg-tz-dark { background-color: var(--bg-dark); }
-.bg-tz-panel { background-color: var(--bg-panel); }
-.border-tz-border { border-color: var(--border-color); }
-.text-tz-text { color: var(--text-main); }
-.text-tz-blue { color: var(--tz-blue); }
-.bg-tz-blue { background-color: var(--tz-blue); }
-.text-tz-green { color: var(--tz-green); }
-.text-tz-red { color: var(--tz-red); }
-
-/* Tarjetas base */
-.tz-card {
-    background-color: var(--bg-panel);
-    border: 1px solid var(--border-color);
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.tz-card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+/* Tarjetas Bento Estilo Premium */
+.bento-card {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.tz-label {
-    font-size: 0.75rem;
+.bento-card:hover {
+    border-color: #38bdf8;
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.1);
+}
+
+.bento-title {
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     color: #64748b;
-    font-weight: 600;
-}
-
-/* Píldoras de estado */
-.pill {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
     font-weight: 700;
-    font-size: 0.75rem;
-    display: inline-block;
 }
-.pill.green { background-color: rgba(16, 185, 129, 0.15); color: var(--tz-green); border: 1px solid rgba(16,185,129,0.3); }
-.pill.red { background-color: rgba(239, 68, 68, 0.15); color: var(--tz-red); border: 1px solid rgba(239,68,68,0.3); }
-.pill.neutral { background-color: rgba(148, 163, 184, 0.1); color: #94a3b8; }
 
-/* Animación de alerta para disciplina baja */
-.animate-bg-danger {
-    animation: danger-pulse 2s infinite;
+/* Animación de alerta para evitar Modo Venganza */
+.pulse-danger {
+    animation: alert-flash 1.5s infinite;
 }
-@keyframes danger-pulse {
-    0% { background-color: var(--bg-panel); }
-    50% { background-color: rgba(239, 68, 68, 0.05); }
-    100% { background-color: var(--bg-panel); }
+
+@keyframes alert-flash {
+    0% { background-color: #0f172a; border-color: #1e293b; }
+    50% { background-color: rgba(244, 63, 94, 0.08); border-color: #f43f5e; }
+    100% { background-color: #0f172a; border-color: #1e293b; }
 }
+
+.win { color: #34d399; }
+.loss { color: #f43f5e; }
